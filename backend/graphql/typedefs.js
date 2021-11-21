@@ -4,7 +4,7 @@ const TypeDefs = gql`
     scalar Date
 
     type Course {
-        id: ID
+        id: String
         code: String
         name: String
         assignments: [Assignment]
@@ -51,7 +51,7 @@ const TypeDefs = gql`
         createCourse(course: CourseInput!): Course
         updateCourse(id: ID!, course: CourseInput!): Course 
         deleteCourse(id: ID!): Course
-        createAssignment(assignment: AssignmentInput!): Assignment
+        createAssignment(courseId: ID!, assignment: AssignmentInput!): Assignment
         updateAssignment(id: ID!, assignment: AssignmentInput!): Assignment
         deleteAssignment(id: ID!): Assignment 
     }

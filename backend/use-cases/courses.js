@@ -1,18 +1,19 @@
 import loggingLevel from '../common/logging-level.js'
 import { performance } from 'perf_hooks'
 import { createHash } from 'crypto'
+import EventTopics from '../common/event-topics.js'
 
 class CourseUseCases {
-    constructor(courseRepository, eventAggregator, cachingService = null, loggingService = null) {
+    constructor(courseRepository, eventAggregationService, cachingService = null, loggingService = null) {
         this.courseRepository = courseRepository
-        this.eventAggregator = eventAggregator
+        this.eventAggregationService = eventAggregationService
         this.cachingService = cachingService
         this.loggingService = loggingService
     }
 
     async create(course) {
         let newCourse = await this.courseRepository.createCourse(course)
-        
+
         this.loggingService?.log(loggingLevel.informational, `Course ${newCourse.code} successfully created.`)
         
         return newCourse

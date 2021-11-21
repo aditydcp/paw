@@ -1,17 +1,23 @@
 import loggingLevel from '../common/logging-level.js'
 import { performance } from 'perf_hooks'
 import { createHash } from 'crypto'
+import EventTopics from '../common/event-topics.js'
 
 class AssignmentUseCases {
-    constructor(assignmentRepository, eventAggregator, cachingService = null, loggingService = null) {
+    constructor(assignmentRepository, eventAggregationService, cachingService = null, loggingService = null) {
         this.assignmentRepository = assignmentRepository
-        this.eventAggregator = eventAggregator
+        this.eventAggregationService = eventAggregationService
         this.cachingService = cachingService
         this.loggingService = loggingService
     }
 
     async create(courseId, assignment) {
         let createdAssignment = await this.assignmentRepository.createAssignment(courseId, assignment)
+        
+        this.eventAggregationService.publish(
+            EventTopics.assignmentCreated,
+            createdAssignment
+        )
 
         this.loggingService.log(loggingLevel.informational, `Assignment ${createdAssignment.title} was created.`)
 
@@ -87,6 +93,11 @@ class AssignmentUseCases {
             return null
         }
 
+        this.eventAggregationService.publish(
+            EventTopics.assignmentCreated,
+            updatedAssignment
+        )
+
         this.loggingService?.log(
             loggingLevel.informational, 
             `Assignment ${id} was updated.`
@@ -106,6 +117,11 @@ class AssignmentUseCases {
 
             return null
         }
+
+        this.eventAggregationService.publish(
+            EventTopics.assignmentDeleted,
+            deletedAssignment
+        )
 
         this.loggingService?.log(
             loggingLevel.informational, 

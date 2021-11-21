@@ -1,56 +1,69 @@
-const GraphqlResolver = (courseUseCases, assignmentUseCases) => {
+import EventTopics from "../common/event-topics.js"
+import dateScalar from './scalars/date-scalar.js'
+
+const graphqlResolvers = (
+    courseUseCases, 
+    courseDtoMapper, 
+    assignmentUseCases,
+    assignmentDtoMapper,
+    eventAggregationService) => {
+    
     return {
+        Date: dateScalar,
         Query: {
             course: async (_, { id }) => {
-                
+                let course = await courseUseCases.readById(id)
+
+                return courseDtoMapper.mapToDetailed(course)
             },
             courses: async (_, { keywords, start, count }) => {
+                let courses = await courseUseCases.search(keywords, start, count) 
 
+                return courses.map(courseDtoMapper.mapToDetailed)
             },
             assignment: async (_, { id }) => {
-                return await assignmentUseCases.readById(id)
-            },
-            assignmentsByCourse: async (_, { courseId }) => {
-                let course = await courseUseCases.readById(courseId)
+                let assignment = await assignmentUseCases.readById(id)
 
-                return course.assignments
+                return assignmentDtoMapper.map(assignment)
             },
             assignments: async (_, { keywords, start, count }) => {
-                return await assignmentUseCases.search(keywords, start, count)
+                let assignments = await assignmentUseCases.search(keywords, start, count)
+
+                return assignments.map(assignmentDtoMapper.map)
             }
         },
         Mutation: {
-            createCourse: async () => {
-                return await assignme
+            createCourse: async (_, { course }) => {
+                return courseDtoMapper.mapToDetailed(await courseUseCases.create(course))
             },
-            updateCourse: async () => {
-    
+            updateCourse: async (_, { id, course }) => {
+                return courseDtoMapper.mapToDetailed(await courseUseCases.update(id, course))
             },
-            deleteCourse: async () => {
-    
+            deleteCourse: async (_, { id }) => {
+                return courseDtoMapper.mapToDetailed(await courseUseCases.delete(id))
             },
-            createAssignment: async () => {
-                
+            createAssignment: async (_, { courseId, assignment }) => {
+                return assignmentDtoMapper.map(await assignmentUseCases.create(courseId, assignment))
             },
-            updateAssignment: async () => {
-    
+            updateAssignment: async (_, { id, assignment }) => {
+                return assignmentDtoMapper.map(await assignmentUseCases.update(id, assignment))
             },
-            deleteAssignment: async () => {
-    
+            deleteAssignment: async (_, { id }) => {
+                return assignmentDtoMapper.map(await assignmentUseCases.delete(id))
             }
         },
         Subscription: {
             assignmentCreated: {
-            subscribe: () => {}
+                subscribe: () => eventAggregationService.subscribe(EventTopics.assignmentCreated)
             },
             assignmentUpdated: {
-            subscribe: () => {}
+                subscribe: () => eventAggregationService.subscribe(EventTopics.assignmentUpdated)
             },
             assignmentDeleted: {
-            subscribe: () => {}
+               subscribe: () => eventAggregationService.subscribe(EventTopics.assignmentDeleted)
             }
         }
     }
 }
 
-export default Resolvers
+export default graphqlResolvers

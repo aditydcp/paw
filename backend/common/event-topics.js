@@ -3,3 +3,5 @@ const EventTopics = {
   assignmentUpdated: 'ASSIGNMENT_UPDATED',
   assignmentDeleted: 'ASSIGNMENT_DELETED'
 }
+
+export default EventTopics
