@@ -14,6 +14,9 @@ import AssignmentsRouter from './routes/assignments.js'
 import AssignmentDtoMapper from './mapper/assignment-dto-mapper.js'
 import GenericErrorHandler from './error-handlers/generic-error-handler.js'
 import CoursesRouter from './routes/courses.js'
+import AssignmentUseCases from './use-cases/assignments.js'
+import EventAggregationService from './services/event-aggregation.js'
+import CourseUseCases from './use-cases/courses.js'
 
 mongoose.connect(applicationConfig.mongodbConnection)
 
@@ -32,9 +35,28 @@ switch (applicationConfig.loggerType) {
         console.warn('Logger not configured.')
         break
 }
-let cachingService = new RedisCachingService(applicationConfig)
+
+const cachingService = new RedisCachingService(applicationConfig)
+
+const eventAggregationService = new EventAggregationService()
+
 let courseRepository = new CourseRepository()
+
 let assignmentRepository = new AssignmentRepository()
+
+const courseUseCases = new CourseUseCases(
+    courseRepository,
+    eventAggregationService,
+    cachingService,
+    loggingService
+)
+
+const assignmentUseCases = new AssignmentUseCases(
+    assignmentRepository,
+    eventAggregationService,
+    cachingService,
+    loggingService
+)
 
 // Configure middlewares.
 app.use(express.json())
@@ -45,11 +67,11 @@ app.use(express.static(path.join(dirname(fileURLToPath(import.meta.url)), 'publi
 // Set API routes.
 app.use(
     '/api', 
-    CoursesRouter(courseRepository, CourseDtoMapper, cachingService, loggingService)
+    CoursesRouter(courseUseCases, CourseDtoMapper)
 )
 app.use(
     '/api', 
-    AssignmentsRouter(assignmentRepository, AssignmentDtoMapper, cachingService, loggingService)
+    AssignmentsRouter(assignmentUseCases, AssignmentDtoMapper)
 )
 
 // Configure error handlers.
