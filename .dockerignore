@@ -1,0 +1,21 @@
+# Docker
+**/.dockerignore
+**/Dockerfile
+
+# Git
+**/.git
+**/.gitignore
+
+# VS Code
+**/.vs
+**/.vscode
+
+# Node
+**/node_modules
+/frontend/build
+
+# Sensitive data
+**/.env
+
+# Misc
+/documentation
