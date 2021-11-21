@@ -26,6 +26,9 @@ WORKDIR /usr/bin/paw-server/backend
 
 COPY ./backend .
 
+# In case the public directory doesn't exist.
+RUN mkdir ./public -p
+
 RUN mv ../frontend/build/* ./public
 
 CMD ["node", "app.js"]
