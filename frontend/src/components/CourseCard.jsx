@@ -11,7 +11,7 @@ const CourseCard = () => {
                 <div className="flex items-center">
                     <p className="flex-grow">42 assignments</p>
                     <Button className="self-end">
-                        Details
+                        Add
                     </Button>
                 </div>
             </div>
