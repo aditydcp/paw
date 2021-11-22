@@ -13,10 +13,10 @@ const CourseAssignments = () => {
                     <button className="underline">Details</button>
                 </div>
                 <Button>
-                    <Icon iconCode="icon-pencil" className="text-white text-3xl" />
+                    <Icon iconCode="icon-pencil" className="text-white text-xl" />
                 </Button>
                 <Button danger>
-                    <Icon iconCode="icon-trash" className="text-white text-3xl" />
+                    <Icon iconCode="icon-trash" className="text-white text-xl" />
                 </Button>
             </div>
             <div className="flex flex-col gap-4">
