@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:4000",
   "dependencies": {
     "@craco/craco": "^6.4.1",
     "@tailwindcss/line-clamp": "^0.2.2",
