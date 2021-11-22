@@ -8,7 +8,7 @@ const AssignmentsTab = () => {
                 <i className="icon-notebook text-purple-700"></i> Assignments
             </h1>
             <div className="grid grid-cols-4 gap-6">
-                <CourseAssignments />
+                <CourseAssignments courseId="something" />
                 <CourseAssignments />
                 <CourseAssignments />
                 <CourseAssignments />
