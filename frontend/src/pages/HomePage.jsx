@@ -10,10 +10,9 @@ const HomePage = () => {
             <Sidebar />
             <TabContainer>
                 <Routes>
-                    <Route path="/" element={<SearchCoursesTab />} />
+                    <Route exact path="/" element={<SearchCoursesTab />} />
                     <Route path="/myassignments" element={<AssignmentsTab />} />
                 </Routes>
-                <AssignmentsTab />
             </TabContainer>
         </div>
     )
