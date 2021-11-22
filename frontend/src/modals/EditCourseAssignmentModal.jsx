@@ -33,7 +33,7 @@ const EditCourseAssignmentModal = ({ courseId, setCourseId }) => {
                         <EditableAssignmentCard />
                     </div>
                     <p className="text-lg font-semibold my-2 ">New assignment</p>
-                    <form className="mb-4 flex flex-col">
+                    <form className="flex flex-col">
                         <label htmlFor="title">Title</label>
                         <TextInput name="title" placeholder="Mengembangkan REST API" />
                         <label htmlFor="title">Deadline</label>
