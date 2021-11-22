@@ -101,6 +101,11 @@ app.use(
     AssignmentsRouter(assignmentUseCases, AssignmentDtoMapper)
 )
 
+// In case of an invalid url, send the index page.
+app.use('*', (req, res) => {
+    res.sendFile(path.join(dirname(fileURLToPath(import.meta.url)), 'public', 'index.html'))
+})
+
 // Configure GraphQL
 const graphqlSchema = makeExecutableSchema({
     typeDefs: TypeDefs,

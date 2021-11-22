@@ -1,6 +1,7 @@
 import AssignmentCard from "./AssignmentCard";
 import Button from "./Button";
 import Card from "./Card";
+import Icon from "./Icon";
 
 const CourseAssignments = () => {
     return (
@@ -11,11 +12,11 @@ const CourseAssignments = () => {
                 <div className="flex-grow flex items-center">
                     <button className="underline">Details</button>
                 </div>
-                <Button>        
-                    <p className="icon-pencil text-xl text-white"></p>
+                <Button>
+                    <Icon iconCode="icon-pencil" className="text-white text-3xl" />
                 </Button>
                 <Button danger>
-                    <p className="icon-trash text-xl text-white"></p>
+                    <Icon iconCode="icon-trash" className="text-white text-3xl" />
                 </Button>
             </div>
             <div className="flex flex-col gap-4">

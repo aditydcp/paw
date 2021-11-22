@@ -3,6 +3,7 @@ import Card from "../../components/Card"
 import CourseCard from "../../components/CourseCard"
 import FloatingActionButton from "../../components/FloatingActionButton"
 import TabContainer from "./TabContainer"
+import Icon from "../../components/Icon"
 
 const SearchCoursesTab = ({ ...props }) => {
     return (
@@ -20,9 +21,7 @@ const SearchCoursesTab = ({ ...props }) => {
                 <CourseCard />
             </div>
             <FloatingActionButton className="absolute bottom-8 right-16">
-                <p className="icon-plus text-white text-3xl">
-                
-                </p>
+                <Icon iconCode="icon-plus" className="text-white text-3xl" />
             </FloatingActionButton>
         </div>
     )
