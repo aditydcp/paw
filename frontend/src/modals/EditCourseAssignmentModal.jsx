@@ -19,6 +19,7 @@ const EditCourseAssignmentModal = ({ courseId, setModalOpen }) => {
     return (
         <Modal
             isOpen={true}
+            closeTimeoutMS={250}
         >
             {(() => {
                 if (course) {
