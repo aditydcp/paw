@@ -17,6 +17,7 @@ const EditCourseAssignmentModal = ({ courseId, setCourseId }) => {
     return (
         <Modal
             isOpen={visible}
+            closeTimeoutMS={250}
         >
             <div className="grid grid-cols-4 gap-4 h-full grid-rows-1">
                 <div className="col-span-3 flex flex-col h-full">
