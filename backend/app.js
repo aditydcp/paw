@@ -23,8 +23,6 @@ import graphqlResolvers from './graphql/resolvers.js'
 import TypeDefs from './graphql/typedefs.js'
 import { execute, subscribe } from 'graphql'
 import { createServer } from 'http'
-import EventAggregation from './services/event-aggregation.js'
-import EventTopics from './common/event-topics.js'
 import { PubSub } from 'graphql-subscriptions'
 
 mongoose.connect(applicationConfig.mongodbConnection)
@@ -48,24 +46,7 @@ switch (applicationConfig.loggerType) {
 
 const cachingService = new RedisCachingService(applicationConfig)
 
-const eventAggregationService = new EventAggregation()
 const pubsub = new PubSub()
-const topicMapping = {
-    [EventTopics.assignmentCreated]: 'assignmentCreated',
-    [EventTopics.assignmentUpdated]: 'assignmentUpdated',
-    [EventTopics.assignmentDeleted]: 'assignmentDeleted'    
-}
-eventAggregationService.addHandler({
-    topics: Object.keys(EventTopics).map(key => EventTopics[key]),
-    publishHandler: (topic, payload) => {
-        pubsub.publish(topic, {
-            [topicMapping[topic]]: AssignmentDtoMapper.map(payload)
-        })
-    },
-    subscribeHandler: (topic) => {
-        return pubsub.asyncIterator([topic])
-    }
-})
 
 let courseRepository = new CourseRepository()
 
@@ -73,14 +54,14 @@ let assignmentRepository = new AssignmentRepository()
 
 const courseUseCases = new CourseUseCases(
     courseRepository,
-    eventAggregationService,
     cachingService,
     loggingService
 )
 
 const assignmentUseCases = new AssignmentUseCases(
     assignmentRepository,
-    eventAggregationService,
+    pubsub,
+    AssignmentDtoMapper,
     cachingService,
     loggingService
 )
@@ -109,7 +90,7 @@ const graphqlSchema = makeExecutableSchema({
         CourseDtoMapper, 
         assignmentUseCases, 
         AssignmentDtoMapper,
-        eventAggregationService
+        pubsub
     )
 })
 

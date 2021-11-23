@@ -6,7 +6,7 @@ const graphqlResolvers = (
     courseDtoMapper, 
     assignmentUseCases,
     assignmentDtoMapper,
-    eventAggregationService) => {
+    pubsub) => {
     
     return {
         Date: dateScalar,
@@ -54,13 +54,13 @@ const graphqlResolvers = (
         },
         Subscription: {
             assignmentCreated: {
-                subscribe: () => eventAggregationService.subscribe(EventTopics.assignmentCreated)
+                subscribe: (_, { courseId }) => pubsub.asyncIterator([`${EventTopics.assignmentCreated}:${courseId}`])
             },
             assignmentUpdated: {
-                subscribe: () => eventAggregationService.subscribe(EventTopics.assignmentUpdated)
+                subscribe: (_, { assignmentId }) => pubsub.asyncIterator([`${EventTopics.assignmentUpdated}:${assignmentId}`])
             },
             assignmentDeleted: {
-               subscribe: () => eventAggregationService.subscribe(EventTopics.assignmentDeleted)
+               subscribe: (_, { assignmentId }) => pubsub.asyncIterator([`${EventTopics.assignmentDeleted}:${assignmentId}`])
             }
         }
     }

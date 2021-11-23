@@ -1,7 +1,7 @@
 const EventTopics = {
-  assignmentCreated: 'ASSIGNMENT_ADDED',
-  assignmentUpdated: 'ASSIGNMENT_UPDATED',
-  assignmentDeleted: 'ASSIGNMENT_DELETED'
+  assignmentCreated: 'assignmentCreated',
+  assignmentUpdated: 'assignmentUpdated',
+  assignmentDeleted: 'assignmentDeleted'
 }
 
 export default EventTopics

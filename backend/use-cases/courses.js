@@ -4,9 +4,8 @@ import { createHash } from 'crypto'
 import EventTopics from '../common/event-topics.js'
 
 class CourseUseCases {
-    constructor(courseRepository, eventAggregationService, cachingService = null, loggingService = null) {
+    constructor(courseRepository, cachingService = null, loggingService = null) {
         this.courseRepository = courseRepository
-        this.eventAggregationService = eventAggregationService
         this.cachingService = cachingService
         this.loggingService = loggingService
     }

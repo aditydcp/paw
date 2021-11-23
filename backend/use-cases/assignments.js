@@ -4,20 +4,20 @@ import { createHash } from 'crypto'
 import EventTopics from '../common/event-topics.js'
 
 class AssignmentUseCases {
-    constructor(assignmentRepository, eventAggregationService, cachingService = null, loggingService = null) {
+    constructor(assignmentRepository, pubsub, dtoMapper, cachingService = null, loggingService = null) {
         this.assignmentRepository = assignmentRepository
-        this.eventAggregationService = eventAggregationService
         this.cachingService = cachingService
         this.loggingService = loggingService
+        this.pubsub = pubsub
+        this.dtoMapper = dtoMapper
     }
 
     async create(courseId, assignment) {
         let createdAssignment = await this.assignmentRepository.createAssignment(courseId, assignment)
         
-        this.eventAggregationService.publish(
-            EventTopics.assignmentCreated,
-            createdAssignment
-        )
+        this.pubsub.publish(`${EventTopics.assignmentCreated}:${courseId}`, {
+            [EventTopics.assignmentCreated]: this.dtoMapper.map(createdAssignment)
+        })
 
         this.loggingService.log(loggingLevel.informational, `Assignment ${createdAssignment.title} was created.`)
 
@@ -93,10 +93,9 @@ class AssignmentUseCases {
             return null
         }
 
-        this.eventAggregationService.publish(
-            EventTopics.assignmentCreated,
-            updatedAssignment
-        )
+        this.pubsub.publish(`${EventTopics.assignmentUpdated}:${id}`, {
+            [EventTopics.assignmentUpdated]: this.dtoMapper.map(updatedAssignment)
+        })
 
         this.loggingService?.log(
             loggingLevel.informational, 
@@ -118,10 +117,9 @@ class AssignmentUseCases {
             return null
         }
 
-        this.eventAggregationService.publish(
-            EventTopics.assignmentDeleted,
-            deletedAssignment
-        )
+        this.pubsub.publish(`${EventTopics.assignmentDeleted}:${id}`, {
+            [EventTopics.assignmentDeleted]: this.dtoMapper.map(deletedAssignment)
+        })
 
         this.loggingService?.log(
             loggingLevel.informational, 
