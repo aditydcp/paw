@@ -45,7 +45,6 @@ const useRealtimeAssignment = (assignmentId) => {
     const [assignment, dispatch] = useReducer(onAssignmentDispatch, null)
 
     const initialize = async () => {
-        console.log(assignmentId)
         let updatedAssignment = await readAssignmentById(assignmentId)
 
         dispatch({

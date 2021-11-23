@@ -55,7 +55,9 @@ let assignmentRepository = new AssignmentRepository()
 const courseUseCases = new CourseUseCases(
     courseRepository,
     cachingService,
-    loggingService
+    loggingService,
+    pubsub,
+    CourseDtoMapper
 )
 
 const assignmentUseCases = new AssignmentUseCases(

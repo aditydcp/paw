@@ -37,8 +37,17 @@ class CourseReporitory {
     }
     
     async updateCourse(id, course) {
+        let oldCourse = (await Course.findById(id).exec()).toObject()
+        
         return await Course
-            .findByIdAndUpdate(id, course, { new: true, overwrite: true })
+            .findByIdAndUpdate(
+                id, {
+                    ...course,
+                    assignments: oldCourse.assignments
+                }, { 
+                    new: true, 
+                    overwrite: true 
+                })
             .lean()
             .exec()
     }
