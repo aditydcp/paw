@@ -15,8 +15,10 @@ const SearchCoursesTab = ({ ...props }) => {
     const formRef = useRef(null)
 
     useEffect(() => {
-        search("")
-    }, [])
+        if (!modalVisible) {
+            search("")
+        }
+    }, [modalVisible])
 
     const search = async (keywords) => setCourses(await searchCourses(keywords, 0, 100))
 

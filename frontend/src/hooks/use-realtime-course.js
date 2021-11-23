@@ -4,7 +4,31 @@ import readCourseById from "../api/read-course-by-id"
 
 const useRealtimeCourse = (courseId) => {
     const listenForCourseUpdate = () => {
-
+        const subscription = 
+            `subscription CourseUpdated($courseId: ID!) {
+                courseUpdated(courseId: $courseId) {
+                    id
+                    name
+                    code
+                }
+            }`
+        
+            GraphqlWebsocket.listen(
+                `COURSE_UPDATED:${courseId}`,
+                {
+                    query: subscription,
+                    operationName: "CourseUpdated",
+                    variables: {
+                        courseId
+                    }
+                },
+                (payload) => {
+                    dispatchCourse({
+                        type: "update",
+                        updatedCourse: payload.data.courseUpdated
+                    })
+                }
+            )
     }
 
     const listenForAssignmentDeleted = (assignmentId) => {

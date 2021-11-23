@@ -15,8 +15,6 @@ const readAssignmentById = async (id) => {
         }
     )
 
-    console.log(response)
-
     return response.data.assignment
 }
 
