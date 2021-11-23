@@ -16,8 +16,8 @@ const graphqlResolvers = (
 
                 return courseDtoMapper.mapToDetailed(course)
             },
-            courses: async (_, { keywords, start, count }) => {
-                let courses = await courseUseCases.search(keywords, start, count) 
+            courses: async (_, { input }) => {
+                let courses = await courseUseCases.search(input.keywords, input.start, input.count) 
 
                 return courses.map(courseDtoMapper.mapToDetailed)
             },
@@ -26,8 +26,8 @@ const graphqlResolvers = (
 
                 return assignmentDtoMapper.map(assignment)
             },
-            assignments: async (_, { keywords, start, count }) => {
-                let assignments = await assignmentUseCases.search(keywords, start, count)
+            assignments: async (_, { input }) => {
+                let assignments = await assignmentUseCases.search(input.keywords, input.start, input.count)
 
                 return assignments.map(assignmentDtoMapper.map)
             }
