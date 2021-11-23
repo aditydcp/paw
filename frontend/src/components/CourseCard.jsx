@@ -9,6 +9,9 @@ const CourseCard = ({ id, name, code, props }) => {
     const [added, toggle] = useCourseCollection(id)
 
     const handleDelete = async () => {
+        if(added){
+            toggle()
+        }
         await DeleteCourse(id)
     }
 
