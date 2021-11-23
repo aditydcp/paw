@@ -47,19 +47,19 @@ const EditCourseAssignmentModal = ({ courseId, setModalOpen }) => {
                         <>
                             <div className="grid grid-cols-4 gap-4 h-full grid-rows-1">
                                 <div className="col-span-3 flex flex-col h-full">
-                                    <div className="grid grid-cols-3 gap-4 overflow-y-scroll">
+                                    <div className="grid grid-cols-1 gap-4 overflow-y-scroll">
                                         <NewAssignmentCard courseId={courseId} />
                                         {assignments.map(id => <EditableAssignmentCard key={id} assignmentId={id} />)}
                                     </div>
                                 </div>
                                 <div className="flex flex-col h-full">
-                                    <form method="POST" className="mb-4 flex-grow" onSubmit={handleUpdateCourse}>
+                                    <form method="POST" className="mb-4 flex-grow flex flex-col" onSubmit={handleUpdateCourse}>
                                         <TextInput name="name" placeholder="Course name" defaultValue={name} />
                                         <TextInput name="code" placeholder="Course code" defaultValue={code} />
                                         <Button type="submit"
                                             className="text-lg text-white self-end"
                                         >
-                                            Update code & name
+                                            Update
                                         </Button>
                                     </form>
                                     <Button 

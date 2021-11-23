@@ -3,10 +3,10 @@ import graphqlFetch from "./graphql-fetch"
 const DeleteCourse = async (courseId) => {
     await graphqlFetch(
         `mutation DeleteCourse($courseId: ID!) {
-                deleteCourse(id: $courseId){
-                    id
-                }
+            deleteCourse(id: $courseId){
+                id
             }
+        }
         `, {
             courseId
         }

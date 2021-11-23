@@ -15,22 +15,8 @@ const AddCourseModal = ({ visible, setVisible }) => {
         let result = await createCourse(name.value, code.value)
 
         if (result.id) {
-            alert ("Course added!")
             setVisible(false)
         }
-    }
-
-    const handleSubmit = async (event) => {
-        event.preventDefault()
-
-        const { name, code } = event.target
-
-        await createCourse({
-            name: name.value,
-            code: code.value
-        })
-
-        setVisible(false)
     }
 
     return (
@@ -40,7 +26,7 @@ const AddCourseModal = ({ visible, setVisible }) => {
         >
             <div className="flex flex-col h-full">
                 <p className="text-lg font-semibold my-2 ">New course</p>
-                <form className="mb-4 flex-grow" onSubmit={handleSubmit}>
+                <form className="mb-4 flex-grow" onSubmit={handleCreateCourse}>
                     <TextInput name="name" placeholder="Course name" />
                     <TextInput name="code" placeholder="Course code" />
                     <Button 
