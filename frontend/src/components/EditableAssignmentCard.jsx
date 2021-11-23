@@ -1,5 +1,6 @@
 import { useState } from "react"
 import DeleteAssignment from "../api/delete-assignment"
+import UpdateAssignment from "../api/update-assignment"
 import Button from "./Button"
 import FlatCard from "./FlatCard"
 import Icon from "./Icon"
@@ -15,6 +16,20 @@ const EditableAssignmentCard = ({ assignment, ...props }) => {
         setIsEditing(!isEditing)
     }
 
+    const handleUpdate = async (event) => {
+        event.preventDefault()
+
+        const { title, deadline, details } = event.target
+
+        await UpdateAssignment(assignment.id, {
+            title: title.value,
+            deadline: new Date(deadline.value).toISOString(),
+            details: details.value
+        })
+
+        toggle()
+    }
+
     const handleDelete = async () => {
         await DeleteAssignment(assignment.id)
     }
@@ -24,16 +39,16 @@ const EditableAssignmentCard = ({ assignment, ...props }) => {
             {(() => {
                 if (isEditing) {
                     return (
-                        <form className="flex flex-col">
+                        <form className="flex flex-col" onSubmit={handleUpdate}>
                             <label htmlFor="title">Title</label>
-                            <TextInput name="title" placeholder="Mengembangkan REST API" defaultValue={title} />
+                            <TextInput name="title" required placeholder="Mengembangkan REST API" defaultValue={title} />
                             <label htmlFor="title">Deadline</label>
-                            <input name="deadline" type="date" className="p-2 rounded w-full border-2 mb-2" placeholder="Deadline" defaultValue={deadline} />
+                            <input name="deadline" required type="date" className="p-2 rounded w-full border-2 mb-2" placeholder="Deadline" defaultValue={deadline} />
                             <label htmlFor="title">Details</label>
-                            <TextAreaInput name="details" defaultValue={details} placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ut ante nec ligula faucibus mollis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum semper sem quis justo ullamcorper, at ultrices ipsum scelerisque. Praesent egestas ligula eget porta rutrum. Aliquam eget mauris eu neque congue placerat a sed lectus. Fusce quam velit, ullamcorper ut sodales quis, dictum quis felis. Cras sit amet nibh sem. Cras tristique nisi ut mauris malesuada, quis bibendum sem egestas. Fusce vestibulum magna nisi. Integer sit amet lorem ac quam volutpat tincidunt. Vivamus gravida nibh a pellentesque congue. Maecenas orci lacus, dictum molestie magna id, consectetur vulputate dolor." />
+                            <TextAreaInput name="details" required defaultValue={details} placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ut ante nec ligula faucibus mollis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum semper sem quis justo ullamcorper, at ultrices ipsum scelerisque. Praesent egestas ligula eget porta rutrum. Aliquam eget mauris eu neque congue placerat a sed lectus. Fusce quam velit, ullamcorper ut sodales quis, dictum quis felis. Cras sit amet nibh sem. Cras tristique nisi ut mauris malesuada, quis bibendum sem egestas. Fusce vestibulum magna nisi. Integer sit amet lorem ac quam volutpat tincidunt. Vivamus gravida nibh a pellentesque congue. Maecenas orci lacus, dictum molestie magna id, consectetur vulputate dolor." />
                             <div className="flex-grow"></div>
                             <div className="flex gap-2 justify-end">
-                                <Button 
+                                <Button type="submit"
                                     className="text-lg text-white self-end"
                                 >
                                     <Icon iconCode="icon-check" className="inline"/> Confirm

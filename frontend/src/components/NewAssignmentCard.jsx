@@ -17,7 +17,7 @@ const NewAssignmentCard = ({ courseId }) => {
     const handleSubmit = async (event) => {
         event.preventDefault()
 
-        let { title, deadline, details } = event.target
+        const { title, deadline, details } = event.target
 
         await createAssignment(courseId, {
             title: title.value,

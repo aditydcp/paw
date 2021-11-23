@@ -21,7 +21,7 @@ const useCourse = (id) => {
                     assignmentId
                 }
             },
-            (payload) => {
+            _ => {
                 dispatch({
                     type: "remove",
                     assignmentId
@@ -30,24 +30,58 @@ const useCourse = (id) => {
         )
     }
 
+    const listenForAssignmentUpdates = (assignmentId) => {
+        const subscription = 
+            `subscription AssignmentUpdated($assignmentId: ID!) {
+                assignmentUpdated(assignmentId: $assignmentId) {
+                    id
+                    title
+                    details
+                    deadline
+                }
+            }`  
+            
+        GraphqlWebsocket.listen(
+            `ASSIGNMENT_UPDATE:${assignmentId}`,
+            {
+                query: subscription,
+                operationName: 'AssignmentUpdated',
+                variables: {
+                    assignmentId
+                }
+            },
+            (payload) => {
+                dispatch({
+                    type: "update",
+                    assignmentId,
+                    updatedAssignment: payload.data.assignmentUpdated
+                })
+            }
+        )
+    }
+
     const [course, setCourse] = useState(null)
     const [assignments, dispatch] = useReducer((state, action) => {
         switch (action.type) {
-            case "update":
+            case "replace":
                 action.assignments.forEach(assignment => {
                     listenForAssignmentDelete(assignment.id)
+                    listenForAssignmentUpdates(assignment.id)
                 })
-
                 return action.assignments
             case "push":
                 if (!state.some(assignment => assignment.id === action.newAssignment.id)) {
                     listenForAssignmentDelete(action.newAssignment.id)
+                    listenForAssignmentUpdates(action.newAssignment.id)
                     return [...state, action.newAssignment]
                 } else {
                     return state
                 }
             case "remove":
                 return state.filter(assignment => assignment.id !== action.assignmentId)
+            case "update":
+                let excludedAssignments = state.filter(assignment => assignment.id !== action.assignmentId)
+                return [...excludedAssignments, action.updatedAssignment]
             default:
                 throw new Error("Invalid action type.")
         }
@@ -59,7 +93,7 @@ const useCourse = (id) => {
         setCourse(fetchedCourse)
 
         dispatch({
-            type: "update",
+            type: "replace",
             assignments: fetchedCourse.assignments
         })
 
