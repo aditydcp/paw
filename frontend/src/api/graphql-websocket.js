@@ -1,6 +1,6 @@
 const isDevEnvironment = process.env.NODE_ENV === "development"
 
-const socket = new WebSocket(`ws://${isDevEnvironment ? "localhost:4000" : window.location.host}/graphql`, ['graphql-ws'])
+const socket = new WebSocket(`${isDevEnvironment ? "ws" :"wss"}://${isDevEnvironment ? "localhost:4000" : window.location.host}/graphql`, ['graphql-ws'])
 
 let websocketConnected = false
 const pendingQueue = []
