@@ -7,9 +7,10 @@ import TextAreaInput from "../components/TextAreaInput"
 import Button from '../components/Button'
 import NewAssignmentCard from '../components/NewAssignmentCard'
 import useCourse from '../hooks/use-course'
+import useRealTimeCourse from "../hooks/use-realtime-course"
 
 const EditCourseAssignmentModal = ({ courseId, setModalOpen }) => {
-    const course = useCourse(courseId)
+    const course = useRealTimeCourse(courseId)
     
     const closeModal = () => {
         setModalOpen(false)
@@ -29,7 +30,7 @@ const EditCourseAssignmentModal = ({ courseId, setModalOpen }) => {
                                 <div className="col-span-3 flex flex-col h-full">
                                     <div className="grid grid-cols-3 gap-4 overflow-y-scroll">
                                         <NewAssignmentCard courseId={courseId} />
-                                        {assignments.map(assignment => <EditableAssignmentCard key={assignment.id} assignment={assignment} />)}
+                                        {assignments.map(id => <EditableAssignmentCard key={id} assignmentId={id} />)}
                                     </div>
                                 </div>
                                 <div className="flex flex-col h-full">

@@ -24,7 +24,7 @@ class AssignmentRepository {
         }).exec()
 
         if (!course) {
-            res.sendStatus(404)
+            return null
         }
 
         let assignment = course.assignments.id(id)

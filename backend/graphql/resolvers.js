@@ -53,6 +53,12 @@ const graphqlResolvers = (
             }
         },
         Subscription: {
+            courseUpdated: {
+                subscribe: (_, { courseId }) => pubsub.asyncIterator([`${EventTopics.courseUpdated}:${courseId}`])
+            },
+            courseDeleted: {
+                subscribe: (_, { courseId }) => pubsub.asyncIterator([`${EventTopics.courseDeleted}:${courseId}`])
+            },
             assignmentCreated: {
                 subscribe: (_, { courseId }) => pubsub.asyncIterator([`${EventTopics.assignmentCreated}:${courseId}`])
             },

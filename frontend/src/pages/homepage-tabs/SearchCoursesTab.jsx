@@ -12,10 +12,16 @@ const SearchCoursesTab = ({ ...props }) => {
 
     const formRef = useRef(null)
 
+    useEffect(() => {
+        search("")
+    }, [])
+
+    const search = async (keywords) => setCourses(await searchCourses(keywords, 0, 100))
+
     const handleSearch = async (event) => {
         event.preventDefault()
 
-        setCourses(await searchCourses(event.target.keywords.value ?? "", 0, 100))
+        await search(event.target.keywords.value ?? "")
     }
 
     return (
@@ -24,7 +30,7 @@ const SearchCoursesTab = ({ ...props }) => {
             <form ref={formRef} onSubmit={handleSearch} className="w-1/2">
                 <input name="keywords" placeholder="Search courses" type="text" className="border-2 rounded-md p-2 mb-8 w-full" />    
             </form>
-            <div className="grid grid-cols-3 gap-4 px-16 w-full">
+            <div className="grid grid-cols-3 gap-4 px-16 w-full pb-8">
                 {courses.map(({ id, name, code }) => <CourseCard key={id} id={id} name={name} code={code} />)}
             </div>
             <FloatingActionButton className="absolute bottom-8 right-16">

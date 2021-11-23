@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useCourse from "../hooks/use-course";
+import useRealtimeCourse from "../hooks/use-realtime-course";
 import EditCourseAssignmentModal from "../modals/EditCourseAssignmentModal";
 import AssignmentCard from "./AssignmentCard";
 import Button from "./Button";
@@ -8,7 +9,7 @@ import Icon from "./Icon";
 
 const CourseAssignments = ({ courseId }) => {
     const [modalOpen, setModalOpen] = useState(false)
-    const course = useCourse(courseId)
+    const course = useRealtimeCourse(courseId)
 
     const openModal = () => {
         setModalOpen(true)
@@ -20,7 +21,7 @@ const CourseAssignments = ({ courseId }) => {
             {(() => {
                 if (course) {
                     const { name, code, assignments } = course
-
+                    
                     return (
                         <>
                             <p className="text-lg font-bold">{name}</p>
@@ -35,11 +36,11 @@ const CourseAssignments = ({ courseId }) => {
                                     <Icon iconCode="icon-pencil" className="text-white text-xl" />
                                 </Button>
                                 <Button danger>
-                                    <Icon iconCode="icon-trash" className="text-white text-xl" />
+                                    <Icon iconCode="icon-minus" className="text-white text-xl" />
                                 </Button>
                             </div>
                             <div className="flex flex-col gap-4">
-                                {assignments.map(({ id, ...assignment }) => <AssignmentCard key={id} {...assignment} />)}
+                                {assignments.map(id => <AssignmentCard key={id} assignmentId={id} />)}
                             </div>
                         </>
                     )
