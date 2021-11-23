@@ -39,7 +39,7 @@ const NewAssignmentCard = ({ courseId }) => {
                             <label htmlFor="title">Deadline</label>
                             <input name="deadline" type="date"  required className="p-2 rounded w-full border-2 mb-2" placeholder="Deadline" />
                             <label htmlFor="title">Details</label>
-                            <TextAreaInput name="details" required placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ut ante nec ligula faucibus mollis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum semper sem quis justo ullamcorper, at ultrices ipsum scelerisque. Praesent egestas ligula eget porta rutrum. Aliquam eget mauris eu neque congue placerat a sed lectus. Fusce quam velit, ullamcorper ut sodales quis, dictum quis felis. Cras sit amet nibh sem. Cras tristique nisi ut mauris malesuada, quis bibendum sem egestas. Fusce vestibulum magna nisi. Integer sit amet lorem ac quam volutpat tincidunt. Vivamus gravida nibh a pellentesque congue. Maecenas orci lacus, dictum molestie magna id, consectetur vulputate dolor." />
+                            <TextAreaInput name="details" required placeholder="Membuat REST API dengan ide yang harus berbeda dari kelompok lain menggunakan MERN." />
                             <div className="flex gap-2 justify-end">
                                 <Button 
                                     className="text-lg text-white self-end"
