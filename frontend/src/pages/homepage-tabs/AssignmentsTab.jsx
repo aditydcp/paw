@@ -1,19 +1,19 @@
 import CourseAssignments from "../../components/CourseAssignments"
 import Button from "../../components/Button"
+import { useEffect, useState } from "react"
+import CourseCollection from "../../api/course-collection"
+import readCourseById from "../../api/read-course-by-id"
 
 const AssignmentsTab = () => {
+    const [courses, setCourses] = useState(CourseCollection.get())
+
     return (
         <div className="m-8">
             <h1 className="text-3xl mb-6">
                 <i className="icon-notebook text-purple-700"></i> Assignments
             </h1>
             <div className="grid grid-cols-4 gap-6">
-                <CourseAssignments courseId="something" />
-                <CourseAssignments />
-                <CourseAssignments />
-                <CourseAssignments />
-                <CourseAssignments />
-                <CourseAssignments />
+                {courses.map(courseId => <CourseAssignments key={courseId} courseId={courseId} />)}
             </div>
         </div>
     )

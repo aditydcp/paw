@@ -6,7 +6,7 @@ const graphqlResolvers = (
     courseDtoMapper, 
     assignmentUseCases,
     assignmentDtoMapper,
-    eventAggregationService) => {
+    pubsub) => {
     
     return {
         Date: dateScalar,
@@ -16,8 +16,8 @@ const graphqlResolvers = (
 
                 return courseDtoMapper.mapToDetailed(course)
             },
-            courses: async (_, { keywords, start, count }) => {
-                let courses = await courseUseCases.search(keywords, start, count) 
+            courses: async (_, { input }) => {
+                let courses = await courseUseCases.search(input.keywords, input.start, input.count) 
 
                 return courses.map(courseDtoMapper.mapToDetailed)
             },
@@ -26,8 +26,8 @@ const graphqlResolvers = (
 
                 return assignmentDtoMapper.map(assignment)
             },
-            assignments: async (_, { keywords, start, count }) => {
-                let assignments = await assignmentUseCases.search(keywords, start, count)
+            assignments: async (_, { input }) => {
+                let assignments = await assignmentUseCases.search(input.keywords, input.start, input.count)
 
                 return assignments.map(assignmentDtoMapper.map)
             }
@@ -53,14 +53,20 @@ const graphqlResolvers = (
             }
         },
         Subscription: {
+            courseUpdated: {
+                subscribe: (_, { courseId }) => pubsub.asyncIterator([`${EventTopics.courseUpdated}:${courseId}`])
+            },
+            courseDeleted: {
+                subscribe: (_, { courseId }) => pubsub.asyncIterator([`${EventTopics.courseDeleted}:${courseId}`])
+            },
             assignmentCreated: {
-                subscribe: () => eventAggregationService.subscribe(EventTopics.assignmentCreated)
+                subscribe: (_, { courseId }) => pubsub.asyncIterator([`${EventTopics.assignmentCreated}:${courseId}`])
             },
             assignmentUpdated: {
-                subscribe: () => eventAggregationService.subscribe(EventTopics.assignmentUpdated)
+                subscribe: (_, { assignmentId }) => pubsub.asyncIterator([`${EventTopics.assignmentUpdated}:${assignmentId}`])
             },
             assignmentDeleted: {
-               subscribe: () => eventAggregationService.subscribe(EventTopics.assignmentDeleted)
+               subscribe: (_, { assignmentId }) => pubsub.asyncIterator([`${EventTopics.assignmentDeleted}:${assignmentId}`])
             }
         }
     }

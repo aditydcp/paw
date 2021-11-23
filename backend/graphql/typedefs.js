@@ -57,9 +57,11 @@ const TypeDefs = gql`
     }
 
     type Subscription {
+        courseUpdated(courseId: ID!): Course
+        courseDeleted(courseId: ID!): Course
         assignmentCreated(courseId: ID!): Assignment
-        assignmentUpdated(courseId: ID!): Assignment
-        assignmentDeleted(courseId: ID!): ID
+        assignmentUpdated(assignmentId: ID!): Assignment
+        assignmentDeleted(assignmentId: ID!): Assignment
     }
 `
 

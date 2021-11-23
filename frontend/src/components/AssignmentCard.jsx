@@ -1,10 +1,25 @@
-const AssignmentCard = ({ ...props }) => {
+import useRealtimeAssignment from "../hooks/use-realtime-assignment"
+import FlatCard from "./FlatCard"
+
+const AssignmentCard = ({ assignmentId, ...props }) => {
+    const assignment = useRealtimeAssignment(assignmentId)
+
     return (
-        <span className="p-6 border-2 rounded-md bg-white" {...props}>
-            <p className="font-bold">Mengembangkan REST API</p>
-            <p className="mb-4">Due 23 Dec 2023</p>
-            <p className="line-clamp-3">Dengan kelompok yang telah disusun sebelumnya, buat 2 fungsi CRUD. Buat repositori github dengan pola nama repositori paw-kelompok-1. Nama branch yang dikumpulkan bernama tugas-2.</p>
-        </span>
+        <FlatCard {...props}>
+            {(() => {
+                if (assignment) {
+                    return (
+                        <>
+                            <p className="font-bold">{assignment.title}</p>
+                            <p className="mb-4">{assignment.deadline}</p>
+                            <p className="line-clamp-3">{assignment.details}</p>
+                        </>
+                    )
+                } else {
+                    return <p>Loading assignment details...</p>
+                }
+            })()}
+        </FlatCard>
     )
 }
 

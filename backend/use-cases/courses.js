@@ -4,11 +4,12 @@ import { createHash } from 'crypto'
 import EventTopics from '../common/event-topics.js'
 
 class CourseUseCases {
-    constructor(courseRepository, eventAggregationService, cachingService = null, loggingService = null) {
+    constructor(courseRepository, cachingService = null, loggingService = null, pubsub, dtoMapper) {
         this.courseRepository = courseRepository
-        this.eventAggregationService = eventAggregationService
         this.cachingService = cachingService
         this.loggingService = loggingService
+        this.pubsub = pubsub
+        this.dtoMapper = dtoMapper
     }
 
     async create(course) {
@@ -88,6 +89,10 @@ class CourseUseCases {
         if (!updatedCourse) {
             return null
         }
+
+        this.pubsub.publish(`${EventTopics.courseUpdated}:${id}`, {
+            [EventTopics.courseUpdated]: this.dtoMapper.mapToSimple(updatedCourse)
+        })
             
         this.loggingService?.log(loggingLevel.informational, `Course ${updatedCourse.code}(id: ${updatedCourse.id}) successfully updated.`)
         
@@ -100,7 +105,11 @@ class CourseUseCases {
         if (!course) {
             return null
         }
-                    
+
+        this.pubsub.publish(`${EventTopics.courseDeleted}:${id}`, {
+            [EventTopics.courseDeleted]: this.dtoMapper.mapToSimple(course)
+        })
+
         this.loggingService?.log(loggingLevel.informational, `Course ${id} successfully deleted.`)
         
         return course
