@@ -1,4 +1,5 @@
 import { useState } from "react"
+import DeleteAssignment from "../api/delete-assignment"
 import Button from "./Button"
 import FlatCard from "./FlatCard"
 import Icon from "./Icon"
@@ -12,6 +13,10 @@ const EditableAssignmentCard = ({ assignment, ...props }) => {
 
     const toggle = () => {
         setIsEditing(!isEditing)
+    }
+
+    const handleDelete = async () => {
+        await DeleteAssignment(assignment.id)
     }
 
     return (
@@ -51,7 +56,7 @@ const EditableAssignmentCard = ({ assignment, ...props }) => {
                                 <Button className="text-white text-lg" onClick={toggle}>
                                     <Icon iconCode="icon-pencil" className="inline"/> Edit
                                 </Button>
-                                <Button danger className="text-white text-lg">
+                                <Button danger className="text-white text-lg" onClick={handleDelete}>
                                     <Icon iconCode="icon-trash" className="inline"/> Delete
                                 </Button>
                             </div>
