@@ -10,7 +10,7 @@ import searchCourses from "../../api/search-courses"
 
 const SearchCoursesTab = ({ ...props }) => {
     const [courses, setCourses] = useState([])
-    const [modalVisible, setModalVisible] = useState(false)
+    const [isAdding, setIsAdding] = useState(false)
 
     const formRef = useRef(null)
 
@@ -29,12 +29,12 @@ const SearchCoursesTab = ({ ...props }) => {
     }
 
     const openModal = () => {
-        setModalVisible(true)
+        setIsAdding(true)
     }
 
     return (
         <div className="w-full h-full flex flex-col items-center" {...props}>
-            <AddCourseModal visible={modalVisible} setVisible={setModalVisible} />
+            <AddCourseModal visible={isAdding} setVisible={setIsAdding} />
             <p className="mb-8 text-3xl mt-1/4-screen">Find a course!</p>
             <form ref={formRef} onSubmit={handleSearch} className="w-1/2">
                 <input name="keywords" placeholder="Search courses" type="text" className="border-2 rounded-md p-2 mb-8 w-full" />    

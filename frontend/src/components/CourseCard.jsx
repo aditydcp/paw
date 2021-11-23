@@ -1,11 +1,19 @@
 import useCourseCollection from "../hooks/use-course-collection"
 import Button from "./Button"
 import Icon from "./Icon"
+import DeleteCourse from "../api/delete-course"
 
 const { default: Card } = require("./Card")
 
 const CourseCard = ({ id, name, code, props }) => {
     const [added, toggle] = useCourseCollection(id)
+
+    const handleDelete = async () => {
+        if(added){
+            toggle()
+        }
+        await DeleteCourse(id)
+    }
 
     return (
         <Card {...props}>
@@ -18,7 +26,7 @@ const CourseCard = ({ id, name, code, props }) => {
                     <Button className="self-end" onClick={toggle} down={added}>
                         {added ? <Icon iconCode="icon-check" /> : <Icon iconCode="icon-plus" />}
                     </Button>
-                    <Button className="self-end" danger>
+                    <Button className="self-end" danger onClick={handleDelete}>
                         <Icon iconCode="icon-trash" className="text-xl" />
                     </Button>
                 </div>
