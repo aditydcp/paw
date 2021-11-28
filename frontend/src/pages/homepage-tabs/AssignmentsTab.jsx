@@ -6,7 +6,7 @@ import readCourseById from "../../api/read-course-by-id"
 import useRealtimeSavedCourses from "../../hooks/use-realtime-saved-courses"
 
 const AssignmentsTab = () => {
-    const [courses, save, unsave] = useRealtimeSavedCourses()
+    const courses = CourseCollection.get()
 
     return (
         <div className="m-8">

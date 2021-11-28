@@ -1,6 +1,11 @@
 import mongoose from 'mongoose'
+const { Types } = mongoose
 
 export const assignmentSchema = mongoose.Schema({
+    courseId: {
+        type: Types.ObjectId,
+        required: true
+    },
     title: {
         type: String,
         required: true

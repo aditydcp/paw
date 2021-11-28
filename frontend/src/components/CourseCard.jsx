@@ -6,28 +6,25 @@ import useRealtimeCourse from "../hooks/use-realtime-course"
 
 const { default: Card } = require("./Card")
 
-const CourseCard = ({ id, ...props }) => {
-    const [added, toggle] = useCourseCollection(id)
-    const course = useRealtimeCourse(id)
+const CourseCard = ({ courseId, ...props }) => {
+    const [added, toggle] = useCourseCollection(courseId)
+    const [course] = useRealtimeCourse(courseId)
 
     const handleDelete = async () => {
         if(added){
             toggle()
         }
-        await DeleteCourse(id)
+        await DeleteCourse(courseId)
     }
 
     return (
         <Card {...props}>
-            {(() => {
-                if (course) {
-                    const { name, code } = course
-
-                    return (
+            {course
+                ?   <>
                         <div className="flex">
                             <div className="flex-grow mr-2">
-                                <p className="text-lg font-semibold">{name}</p>
-                                <p>{code}</p>
+                                <p className="text-lg font-semibold">{course.name}</p>
+                                <p>{course.code}</p>
                             </div>
                             <div className="text-white text-xl flex flex-col gap-2">
                                 <Button className="self-end" onClick={toggle} down={added}>
@@ -38,11 +35,9 @@ const CourseCard = ({ id, ...props }) => {
                                 </Button>
                             </div>
                         </div>
-                    )
-                } else {
-                    return <p>Loading course details...</p>
-                }
-            })()}
+                    </>
+                :   <p>Loading course details...</p>
+            }
         </Card>
     )
 }

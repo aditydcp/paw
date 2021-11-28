@@ -4,105 +4,57 @@ import mongoose from 'mongoose';
 
 class AssignmentRepository {
     async createAssignment(courseId, assignment) {
-        let course = await Course.findById(courseId).exec();
-            
         let newAssignment = new Assignment({
-            ...assignment,
-            course: mongoose.Types.ObjectId(courseId)
+            courseId,
+            ...assignment
         })
 
-        course.assignments.push(newAssignment)
-
-        await course.save()
+        await newAssignment.save()
 
         return newAssignment.toObject()
     }
 
     async readAssignmentById(id) {
-        let course = await Course.findOne({
-            'assignments._id': mongoose.Types.ObjectId(id)
-        }).exec()
+        return await Assignment
+            .findById(id)
+            .lean()
+            .exec()
+    }
 
-        if (!course) {
-            return null
-        }
-
-        let assignment = course.assignments.id(id)
-
-        return assignment.toObject()
+    async readAssignmentsByCourseId(courseId) {
+        return await Assignment
+            .find({
+                courseId
+            })
+            .lean()
+            .exec()
     }
 
     async searchAssignments(keywords, start, count) {
-        let query = {}
-
-        if (keywords) {
-            let searchRegex = keywords.split(' ').map(keyword => `(${keyword})`).join('|')
-
-            query = {
-                ...query,
-                $or: [
-                    {
-                        title: { $regex: searchRegex, $options: 'i' } 
-                    },
-                    {
-                        details: { $regex: searchRegex, $options: 'i' } 
-                    }
-                ]
-            }
-        }
-
-        let assignments = await Course
-            .aggregate()
-            .unwind('$assignments')
-            .replaceRoot('$assignments')
-            .match(query)
-            .skip(start)
-            .limit(count)
-            .exec()
-
-        return assignments
+        throw new Error("No need for this to be implemented yet.")
     }
 
     async updateAssignment(id, assignment) {
-        let course = await Course
-            .findOneAndUpdate({
-                'assignments._id': mongoose.Types.ObjectId(id)
-            }, {    
-                $set: {
-                    'assignments.$': {
-                        ...assignment,
-                        _id: mongoose.Types.ObjectId(id)
-                    }
-                }
-            }, { new: true })
+        let oldAssignment = await Assignment.findById(id).exec()
+
+        return await Assignment
+            .findByIdAndUpdate(
+                id, {
+                    ...assignment,
+                    courseId: oldAssignment.courseId
+                }, {
+                    new: true,
+                    overwrite: true
+                })
+            .lean()
             .exec()
-
-        if (!course) {
-            return null
-        }
-
-        let assignmentDocument = course.assignments.id(id)
-
-        return assignmentDocument.toObject()
     }
 
     async deleteAssignment(id) {
-        let course = await Course.findOne({
-            'assignments._id': mongoose.Types.ObjectId(id)
-        }).exec()
-
-        if (!course) {
-            return null
-        }
-
-        let assignmentDocument = course.assignments.id(id)
-
-        let assignment = assignmentDocument.toObject()
-        assignmentDocument.remove()
-
-        await course.save()
-
-        return assignment
+        return await Assignment
+            .findByIdAndDelete(id)
+            .lean()
+            .exec()
     }
 }
 

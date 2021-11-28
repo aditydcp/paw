@@ -91,10 +91,10 @@ class CourseUseCases {
         }
 
         this.pubsub.publish(`${EventTopics.courseUpdated}:${id}`, {
-            [EventTopics.courseUpdated]: this.dtoMapper.mapToSimple(updatedCourse)
+            [EventTopics.courseUpdated]: this.dtoMapper.map(updatedCourse)
         })
             
-        this.loggingService?.log(loggingLevel.informational, `Course ${updatedCourse.code}(id: ${updatedCourse.id}) successfully updated.`)
+        this.loggingService?.log(loggingLevel.informational, `Course ${updatedCourse.code}(id: ${id}) successfully updated.`)
         
         return updatedCourse
     }
@@ -106,8 +106,8 @@ class CourseUseCases {
             return null
         }
 
-        this.pubsub.publish(`${EventTopics.courseDeleted}:${id}`, {
-            [EventTopics.courseDeleted]: this.dtoMapper.mapToSimple(course)
+        this.pubsub.publish(`${EventTopics.courseDeleted}`, {
+            [EventTopics.courseDeleted]: this.dtoMapper.map(course)
         })
 
         this.loggingService?.log(loggingLevel.informational, `Course ${id} successfully deleted.`)

@@ -1,4 +1,6 @@
+import { useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
+import Queries from "../api/queries";
 import useCourse from "../hooks/use-course";
 import useCourseCollection from "../hooks/use-course-collection";
 import useRealtimeCourse from "../hooks/use-realtime-course";
@@ -10,8 +12,9 @@ import Icon from "./Icon";
 
 const CourseAssignments = ({ courseId }) => {
     const [modalOpen, setModalOpen] = useState(false)
-    const [added, toggle] = useCourseCollection(courseId)
-    const course = useRealtimeCourse(courseId)
+    const [course, assignments, loading] = useRealtimeCourse(courseId)
+    const added = true
+    const toggle = () => {}
 
     const openModal = () => {
         setModalOpen(true)
@@ -22,13 +25,11 @@ const CourseAssignments = ({ courseId }) => {
             <Card>
                 {modalOpen ? <EditCourseAssignmentModal courseId={courseId} setModalOpen={setModalOpen} /> : null}
                 {(() => {
-                    if (course) {
-                        const { name, code, assignments } = course
-                        
+                    if (!loading && course && assignments) {
                         return (
                             <>
-                                <p className="text-lg font-bold">{name}</p>
-                                <p className="mb-3 text-gray-500">{code}</p>
+                                <p className="text-lg font-bold">{course.name}</p>
+                                <p className="mb-3 text-gray-500">{course.code}</p>
                                 <div className="mb-3 flex gap-2 justify-end">
                                     <div className="flex-grow flex items-center"></div>
                                     <Button onClick={openModal}>
@@ -39,7 +40,7 @@ const CourseAssignments = ({ courseId }) => {
                                     </Button>
                                 </div>
                                 <div className="flex flex-col gap-4">
-                                    {assignments.map(id => <AssignmentCard key={id} assignmentId={id} />)}
+                                    {assignments.map(assignment => <AssignmentCard key={assignment.id} initialAssignment={assignment} />)}
                                 </div>
                             </>
                         )

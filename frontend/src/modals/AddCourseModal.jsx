@@ -10,8 +10,6 @@ const AddCourseModal = ({ visible, setVisible }) => {
 
         let { name, code } = event.target
 
-        console.log(name, code)
-
         let result = await createCourse(name.value, code.value)
 
         if (result.id) {

@@ -1,148 +1,65 @@
-import { useEffect, useReducer } from "react"
-import GraphqlWebsocket from "../api/graphql-websocket"
-import readCourseById from "../api/read-course-by-id"
+import { useQuery, useSubscription } from "@apollo/client"
+import { useEffect, useState } from "react"
+import Queries from "../api/queries"
+import Subscriptions from "../api/subscriptions"
 
-const useRealtimeCourse = (courseId) => {
-    const listenForCourseUpdate = () => {
-        const subscription = 
-            `subscription CourseUpdated($courseId: ID!) {
-                courseUpdated(courseId: $courseId) {
-                    id
-                    name
-                    code
-                }
-            }`
-        
-            GraphqlWebsocket.listen(
-                `COURSE_UPDATED:${courseId}`,
-                {
-                    query: subscription,
-                    operationName: "CourseUpdated",
-                    variables: {
-                        courseId
-                    }
-                },
-                (payload) => {
-                    dispatchCourse({
-                        type: "update",
-                        updatedCourse: payload.data.courseUpdated
-                    })
-                }
-            )
-    }
+const useRealtimeCourse = (id) => {
+    const { loading, data: courseData } = useQuery(Queries.READ_COURSE_BY_ID, {
+        variables: {
+            id
+        },
+        fetchPolicy: 'no-cache'
+    })
 
-    const listenForAssignmentDeleted = (assignmentId) => {
-        const subscription = 
-            `subscription AssignmentDeleted($assignmentId: ID!) {
-                assignmentDeleted(assignmentId: $assignmentId) {
-                    id
-                }
-            }`
+    const [course, setCourse] = useState(null)
+    const [assignments, setAssignments] = useState([])
 
-        GraphqlWebsocket.listen(
-            `ASSIGNMENT_DELETE:${assignmentId}`,
-            {
-                query: subscription,
-                operationName: 'AssignmentDeleted',
-                variables: {
-                    assignmentId
-                }
-            },
-            _ => {
-                dispatchAssignments({
-                    type: "delete",
-                    deletedAssignment: assignmentId
-                })
-            }
-        )
-    }
-
-    const listenForAssignmentCreated = () => {
-        const subscription = 
-            `subscription AssignmentCreated($courseId: ID!) {
-                assignmentCreated(courseId: $courseId) {
-                    id
-                }
-            }`
-
-        GraphqlWebsocket.listen(
-            `ASSIGNMENT_CREATED:${courseId}`, 
-            {
-                query: subscription,
-                operationName: 'AssignmentCreated',
-                variables: {
-                    courseId: courseId
-                }
-            },  
-            (payload) => {
-                dispatchAssignments({
-                    type: "create",
-                    newAssignment: payload.data.assignmentCreated.id
-                })
-            }
-        )
-    }
-
-    const handleAssignmentDispatch = (oldAssignments, action) => {
-        if (action.type === "initialize") {
-            listenForAssignmentCreated()
-
-            action.assignments.forEach(id => listenForAssignmentDeleted(id))
-
-            return action.assignments
-        } else if (action.type === "create") {
-            listenForAssignmentDeleted(action.newAssignment)
-            if (!oldAssignments.some(id => id === action.newAssignment)) {
-                return [...oldAssignments, action.newAssignment]
-            } else {
-                return oldAssignments
-            }
-        } else if (action.type === "delete") {
-            return oldAssignments.filter(id => id !== action.deletedAssignment)
-        } else {
-            return oldAssignments
+    const { data: updatedCourseData } = useSubscription(Subscriptions.COURSE_UPDATED, {
+        variables: {
+            id
         }
-    }
+    })
 
-    const [assignments, dispatchAssignments] = useReducer(handleAssignmentDispatch, [])
-
-    const handleCourseDispatch = (oldCourse, action) => {
-        if (action.type === "initialize") {
-            const { assignments, ...course } = action.course
-
-            dispatchAssignments({
-                type: "initialize",
-                assignments: assignments.map(assignment => assignment.id)
-            })
-
-            listenForCourseUpdate()
-            return course
-        } else if (action.type === "update") {
-            return action.updatedCourse
-        } else {
-            return oldCourse
+    const { data: newAssignmentData } = useSubscription(Subscriptions.ASSIGNMENT_CREATED, {
+        variables: {
+            courseId: id
         }
-    }
+    })
 
-    const [course, dispatchCourse] = useReducer(handleCourseDispatch, null)
-
-    const initialize = async () => {
-        let course = await readCourseById(courseId)
-
-        dispatchCourse({
-            type: "initialize",
-            course
-        })
-    }
+    const { data: deletedAssignmentData } = useSubscription(Subscriptions.ASSIGNMENT_DELETED, {
+        variables: {
+            courseId: id
+        }
+    })
 
     useEffect(() => {
-        initialize()
-    }, [])
+        if (courseData) {
+            const { assignments, ...course } = courseData.course
 
-    return {
-        ...course,
-        assignments
-    }
+            setCourse(course)
+            setAssignments(assignments)
+        }
+    }, [courseData])
+
+    useEffect(() => {
+        if (updatedCourseData?.courseUpdated) {
+            setCourse(updatedCourseData.courseUpdated)
+        }
+    }, [updatedCourseData])
+
+    useEffect(() => {
+        if (newAssignmentData?.assignmentCreated) {
+            setAssignments([...assignments, newAssignmentData.assignmentCreated])
+        }
+    }, [newAssignmentData])
+
+    useEffect(() => {
+        if (deletedAssignmentData?.assignmentDeleted) {
+            setAssignments(assignments.filter(assignment => assignment.id !== deletedAssignmentData.assignmentDeleted.id))
+        }
+    }, [deletedAssignmentData])
+
+    return [course, assignments, loading]
 }
 
 export default useRealtimeCourse

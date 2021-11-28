@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import { assignmentSchema } from './assignment.js'
 
 const courseSchema = mongoose.Schema({
     code: {
@@ -10,8 +9,7 @@ const courseSchema = mongoose.Schema({
     name: {
         type: String,
         required: true
-    },
-    assignments: [assignmentSchema]
+    }
 })
 
 courseSchema.pre('findOneAndUpdate', function(next) {
@@ -26,9 +24,7 @@ courseSchema.pre('findByIdAndUpdate', function(next) {
 
 courseSchema.index({
     code: 'text',
-    name: 'text',
-    'assignments.title': 'text',
-    'assignments.details': 'text'
+    name: 'text'
 })
 
 const Course = mongoose.model('Course', courseSchema)

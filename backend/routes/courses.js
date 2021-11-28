@@ -7,7 +7,7 @@ const CoursesRouter = (courseUseCases, dtoMapper) => {
     router.post('/courses', routeHandlerErrorWrapper(async (req, res) => {
         let course = await courseUseCases.create(req.body)
 
-        let dto = dtoMapper.mapToDetailed(course)
+        let dto = dtoMapper.map(course)
 
         res.send(JSON.stringify(dto))
     }))
@@ -19,7 +19,7 @@ const CoursesRouter = (courseUseCases, dtoMapper) => {
 
         let courses = await courseUseCases.search(keywords, start, count)
 
-        let dtos = courses.map(dtoMapper.mapToSimple)
+        let dtos = courses.map(dtoMapper.map)
 
         res.send(JSON.stringify(dtos))
     }))
@@ -28,7 +28,7 @@ const CoursesRouter = (courseUseCases, dtoMapper) => {
         let course = await courseUseCases.readById(req.params.id)
         
         if (course) {
-            let dto = dtoMapper.mapToDetailed(course)
+            let dto = dtoMapper.map(course)
 
             res.send(JSON.stringify(dto))
         } else {
@@ -40,7 +40,7 @@ const CoursesRouter = (courseUseCases, dtoMapper) => {
         let course = await courseUseCases.update(req.params.id, req.body)
 
         if (course) {
-            let dto = dtoMapper.mapToDetailed(course)
+            let dto = dtoMapper.map(course)
 
             res.send(JSON.stringify(dto))
         } else {
@@ -52,7 +52,7 @@ const CoursesRouter = (courseUseCases, dtoMapper) => {
         let course = await courseUseCases.delete(req.params.id)
 
         if (course) {
-            let dto = dtoMapper.mapToDetailed(course)
+            let dto = dtoMapper.map(course)
 
             res.send(JSON.stringify(dto))
         } else {

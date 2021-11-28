@@ -1,55 +1,19 @@
-import { useEffect, useReducer } from "react"
-import CourseCollection from "../api/course-collection"
-import GraphqlWebsocket from "../api/graphql-websocket"
+import { useSubscription } from "@apollo/client"
+import { useEffect, useState } from "react"
+import Subscriptions from "../api/subscriptions"
 
-const useRealtimeCourseList = () => {
-    const listenForCourseDeleted = (courseId) => {
-        const subscription = 
-            `subscription CourseDeleted($courseId: ID!) {
-                courseDeleted(courseId: $courseId) {
-                    id
-                }
-            }`
+const useRealtimeCourseList = (initialCourseIds) => {
+    const [courseIdsState, setCoursesIdsState] = useState(initialCourseIds)
 
-        GraphqlWebsocket.listen(
-            `COURSE_DELETED:${courseId}`, 
-            {
-                query: subscription,
-                operationName: 'CourseDeleted',
-                variables: {
-                    courseId
-                }
-            },  
-            (payload) => {
-                dispatchCourses({
-                    type: "delete",
-                    deletedCourseId: payload.data.courseDeleted.id
-                })
-            }
-        )
-    }
+    const { data: deletedCourseData } = useSubscription(Subscriptions.COURSE_DELETED)
 
-    const handleCoursesDispatch = (oldCourses, action) => {
-        if (action.type === "override") {
-            action.courses.forEach(id => listenForCourseDeleted(id))
-            return action.courses
-        } else if (action.type === "delete") {
-            return oldCourses.filter(id => id !== action.deletedCourseId)
-        } else {
-            return oldCourses
+    useEffect(() => {
+        if (deletedCourseData?.courseDeleted) {
+            setCoursesIdsState(courseIdsState.filter(id => id !== deletedCourseData.courseDeleted.id))
         }
-    }
+    }, [deletedCourseData])
 
-    const [courses, dispatchCourses] = useReducer(handleCoursesDispatch, [])
-
-    const setCourses = (courses) => {
-        dispatchCourses({
-            type: "override",
-            courses
-        })
-    }
-
-    return [courses, setCourses]
+    return [courseIdsState, setCoursesIdsState]
 }
 
 export default useRealtimeCourseList
