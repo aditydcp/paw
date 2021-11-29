@@ -15,7 +15,6 @@ const useRealtimeAssignment = ({ id, ...assignment }) => {
     })
 
     useEffect(() => {
-        console.log(data)
         if (data?.assignmentUpdated) {
             setAssignmentState(data?.assignmentUpdated)
         }

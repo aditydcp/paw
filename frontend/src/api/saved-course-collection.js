@@ -6,7 +6,7 @@ const tryGetCourses = () => {
     return coursesString ? JSON.parse(coursesString) : []
 }
 
-const CourseCollection = {
+const SavedCourseCollection = {
     add(courseId) {
         if (!localStorage.getItem(STORAGE_KEY)) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify([]))
@@ -17,6 +17,13 @@ const CourseCollection = {
         courses.push(courseId)
     
         localStorage.setItem(STORAGE_KEY, JSON.stringify(courses))
+        
+        window.dispatchEvent( new Event('storage') )
+    },
+    set(courseIds) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(courseIds))
+
+        window.dispatchEvent( new Event('storage') )
     },
     get() {
         return tryGetCourses()
@@ -32,7 +39,9 @@ const CourseCollection = {
         courses = courses.filter(id => id != courseId)
 
         localStorage.setItem(STORAGE_KEY, JSON.stringify(courses))
+
+        window.dispatchEvent( new Event('storage') )
     }
 }
 
-export default CourseCollection
+export default SavedCourseCollection
