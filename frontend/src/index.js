@@ -9,7 +9,6 @@ import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, split } from '@a
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 
-
 const isDevEnvironment = process.env.NODE_ENV === "development"
 
 const httpLink = new HttpLink({
@@ -17,7 +16,7 @@ const httpLink = new HttpLink({
 })
 
 const wsLink = new WebSocketLink({
-    uri: 'ws://localhost:4000/graphql',
+    uri: `${isDevEnvironment ? "ws" :"wss"}://${isDevEnvironment ? "localhost:4000" : window.location.host}/graphql`,
     options: {
         reconnect: true
     }
