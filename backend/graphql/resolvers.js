@@ -14,33 +14,31 @@ const graphqlResolvers = (
             course: async (_, { id }) => {
                 let course = await courseUseCases.readById(id)
 
-                return courseDtoMapper.mapToDetailed(course)
+                return courseDtoMapper.map(course)
             },
             courses: async (_, { input }) => {
+                console.log(input)
                 let courses = await courseUseCases.search(input.keywords, input.start, input.count) 
 
-                return courses.map(courseDtoMapper.mapToDetailed)
-            },
-            assignment: async (_, { id }) => {
-                let assignment = await assignmentUseCases.readById(id)
-
-                return assignmentDtoMapper.map(assignment)
-            },
-            assignments: async (_, { input }) => {
-                let assignments = await assignmentUseCases.search(input.keywords, input.start, input.count)
-
+                return courses.map(courseDtoMapper.map)
+            }
+        },
+        Course: {
+            async assignments(course) {
+                let assignments = await assignmentUseCases.readAssignmentsByCourseId(course.id)
+                
                 return assignments.map(assignmentDtoMapper.map)
             }
         },
         Mutation: {
             createCourse: async (_, { course }) => {
-                return courseDtoMapper.mapToDetailed(await courseUseCases.create(course))
+                return courseDtoMapper.map(await courseUseCases.create(course))
             },
             updateCourse: async (_, { id, course }) => {
-                return courseDtoMapper.mapToDetailed(await courseUseCases.update(id, course))
+                return courseDtoMapper.map(await courseUseCases.update(id, course))
             },
             deleteCourse: async (_, { id }) => {
-                return courseDtoMapper.mapToDetailed(await courseUseCases.delete(id))
+                return courseDtoMapper.map(await courseUseCases.delete(id))
             },
             createAssignment: async (_, { courseId, assignment }) => {
                 return assignmentDtoMapper.map(await assignmentUseCases.create(courseId, assignment))
@@ -53,20 +51,23 @@ const graphqlResolvers = (
             }
         },
         Subscription: {
+            courseCreated: {
+                subscribe: () => null
+            },
             courseUpdated: {
-                subscribe: (_, { courseId }) => pubsub.asyncIterator([`${EventTopics.courseUpdated}:${courseId}`])
+                subscribe: (_, { id }) => pubsub.asyncIterator([`${EventTopics.courseUpdated}:${id}`])
             },
             courseDeleted: {
-                subscribe: (_, { courseId }) => pubsub.asyncIterator([`${EventTopics.courseDeleted}:${courseId}`])
+                subscribe: () => pubsub.asyncIterator([`${EventTopics.courseDeleted}`])
             },
             assignmentCreated: {
                 subscribe: (_, { courseId }) => pubsub.asyncIterator([`${EventTopics.assignmentCreated}:${courseId}`])
             },
             assignmentUpdated: {
-                subscribe: (_, { assignmentId }) => pubsub.asyncIterator([`${EventTopics.assignmentUpdated}:${assignmentId}`])
+                subscribe: (_, { id }) => pubsub.asyncIterator([`${EventTopics.assignmentUpdated}:${id}`])
             },
             assignmentDeleted: {
-               subscribe: (_, { assignmentId }) => pubsub.asyncIterator([`${EventTopics.assignmentDeleted}:${assignmentId}`])
+               subscribe: (_, { courseId }) => pubsub.asyncIterator([`${EventTopics.assignmentDeleted}:${courseId}`])
             }
         }
     }

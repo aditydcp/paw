@@ -1,63 +1,29 @@
-import { useEffect, useReducer } from "react"
-import GraphqlWebsocket from "../api/graphql-websocket"
-import readAssignmentById from "../api/read-assignment-by-id"
+import { useSubscription } from "@apollo/client"
+import { useEffect, useReducer, useState } from "react"
+import Subscriptions from "../api/subscriptions"
 
-const useRealtimeAssignment = (assignmentId) => {
-    const listenForUpdates = () => {
-        const subscription = 
-            `subscription AssignmentUpdated($assignmentId: ID!) {
-                assignmentUpdated(assignmentId: $assignmentId) {
-                    title
-                    details
-                    deadline
-                }
-            }`
-        
-        GraphqlWebsocket.listen(
-            `ASSIGNMENT_UPDATE:${assignmentId}`,
-            {
-                query: subscription,
-                operationName: 'AssignmentUpdated',
-                variables: {
-                    assignmentId: assignmentId
-                }
-            },
-            (payload) => {
-                dispatch({
-                    type: "update",
-                    updatedAssignment: payload.data.assignmentUpdated
-                })
-            }
-        )
-    }
+const useRealtimeAssignment = ({ id, ...assignment }) => {
+    const [assignmentState, setAssignmentState] = useState({
+        id,
+        ...assignment
+    })
 
-    const onAssignmentDispatch = (oldAssignment, { type, updatedAssignment }) => {
-        if (type === "initialize") {
-            listenForUpdates()
-            return updatedAssignment
-        } else if (type === "update") {
-            return updatedAssignment
-        } else {
-            return oldAssignment
+    const { data, loading } = useSubscription(Subscriptions.ASSIGNMENT_UPDATED, {
+        variables: {
+            assignmentId: id
         }
-    }
-
-    const [assignment, dispatch] = useReducer(onAssignmentDispatch, null)
-
-    const initialize = async () => {
-        let updatedAssignment = await readAssignmentById(assignmentId)
-
-        dispatch({
-            type: "initialize",
-            updatedAssignment
-        })
-    }
+    })
 
     useEffect(() => {
-        initialize()
-    }, [])
+        if (data?.assignmentUpdated) {
+            setAssignmentState(data?.assignmentUpdated)
+        }
+    }, [data])
 
-    return assignment
+    return [
+        assignmentState,
+        loading
+    ]
 }
 
 export default useRealtimeAssignment

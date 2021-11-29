@@ -8,10 +8,10 @@ import Icon from "./Icon"
 import TextAreaInput from "./TextAreaInput"
 import TextInput from "./TextInput"
 
-const EditableAssignmentCard = ({ assignmentId, ...props }) => {
+const EditableAssignmentCard = ({ initialAssignment, ...props }) => {
     const [isEditing, setIsEditing] = useState(false)
 
-    const assignment = useRealtimeAssignment(assignmentId)
+    const [assignment, loading] = useRealtimeAssignment(initialAssignment)
 
     const toggle = () => {
         setIsEditing(!isEditing)
@@ -22,7 +22,7 @@ const EditableAssignmentCard = ({ assignmentId, ...props }) => {
 
         const { title, deadline, details } = event.target
 
-        await UpdateAssignment(assignment.id, {
+        await UpdateAssignment(initialAssignment.id, {
             title: title.value,
             deadline: new Date(deadline.value).toISOString(),
             details: details.value
@@ -32,25 +32,22 @@ const EditableAssignmentCard = ({ assignmentId, ...props }) => {
     }
 
     const handleDelete = async () => {
-        await DeleteAssignment(assignment.id)
+        await DeleteAssignment(initialAssignment.id)
     }
 
     return (
         <FlatCard>
             {(() => {
                 if (assignment) {
-
-                    const { title, deadline, details } = assignment
-
                     if (isEditing) {
                         return (
                             <form className="flex flex-col" onSubmit={handleUpdate}>
                                 <label htmlFor="title">Title</label>
-                                <TextInput name="title" required placeholder="Mengembangkan REST API" defaultValue={title} />
+                                <TextInput name="title" required placeholder="Mengembangkan REST API" defaultValue={assignment.title} />
                                 <label htmlFor="title">Deadline</label>
-                                <input name="deadline" required type="date" className="p-2 rounded w-full border-2 mb-2" placeholder="Deadline" defaultValue={deadline} />
+                                <input name="deadline" required type="date" className="p-2 rounded w-full border-2 mb-2" placeholder="Deadline" defaultValue={assignment.deadline} />
                                 <label htmlFor="title">Details</label>
-                                <TextAreaInput name="details" required defaultValue={details} placeholder="Membuat REST API dengan ide yang harus berbeda dari kelompok lain menggunakan MERN." />
+                                <TextAreaInput name="details" required defaultValue={assignment.details} placeholder="Membuat REST API dengan ide yang harus berbeda dari kelompok lain menggunakan MERN." />
                                 <div className="flex-grow"></div>
                                 <div className="flex gap-2 justify-end">
                                     <Button type="submit"
@@ -69,9 +66,9 @@ const EditableAssignmentCard = ({ assignmentId, ...props }) => {
                     } else {
                         return (
                             <div className="flex flex-col h-full">
-                                <p className="font-bold">{title}</p>
-                                <p className="mb-4">{deadline}</p>
-                                <p className="mb-4 flex-grow">{details}</p>
+                                <p className="font-bold">{assignment.title}</p>
+                                <p className="mb-4">{assignment.deadline}</p>
+                                <p className="mb-4 flex-grow">{assignment.details}</p>
                                 <div className="flex justify-end gap-2">
                                     <Button className="text-white text-lg" onClick={toggle}>
                                         <Icon iconCode="icon-pencil" className="inline"/> Edit

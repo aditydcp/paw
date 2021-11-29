@@ -32,8 +32,6 @@ const TypeDefs = gql`
     type Query {
         course(id: ID!): Course
         courses(input: CoursesQueryInput): [Course]
-        assignment(id: ID!): Assignment
-        assignments(input: AssignmentsQueryInput): [Assignment]
     }
 
     input CourseInput {
@@ -57,11 +55,12 @@ const TypeDefs = gql`
     }
 
     type Subscription {
-        courseUpdated(courseId: ID!): Course
-        courseDeleted(courseId: ID!): Course
+        courseCreated: Course
+        courseUpdated(id: ID!): Course
+        courseDeleted: Course
         assignmentCreated(courseId: ID!): Assignment
-        assignmentUpdated(assignmentId: ID!): Assignment
-        assignmentDeleted(assignmentId: ID!): Assignment
+        assignmentUpdated(id: ID!): Assignment
+        assignmentDeleted(courseId: ID!): Assignment
     }
 `
 

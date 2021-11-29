@@ -56,6 +56,12 @@ class AssignmentUseCases {
         return assignment
     }
 
+    async readAssignmentsByCourseId(courseId) {
+        let assignments = await this.assignmentRepository.readAssignmentsByCourseId(courseId)
+
+        return assignments
+    }
+
     async search(keywords, start, count) {
         let queryStartTime = performance.now()
 
@@ -117,7 +123,7 @@ class AssignmentUseCases {
             return null
         }
 
-        this.pubsub.publish(`${EventTopics.assignmentDeleted}:${id}`, {
+        this.pubsub.publish(`${EventTopics.assignmentDeleted}:${deletedAssignment.courseId}`, {
             [EventTopics.assignmentDeleted]: this.dtoMapper.map(deletedAssignment)
         })
 

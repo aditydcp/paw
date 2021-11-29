@@ -1,12 +1,12 @@
 import CourseAssignments from "../../components/CourseAssignments"
 import Button from "../../components/Button"
-import { useEffect, useState } from "react"
-import CourseCollection from "../../api/course-collection"
+import { useContext, useEffect, useState } from "react"
 import readCourseById from "../../api/read-course-by-id"
 import useRealtimeSavedCourses from "../../hooks/use-realtime-saved-courses"
+import SavedCoursesContext from "../../context/saved-courses-context"
 
 const AssignmentsTab = () => {
-    const [courses, save, unsave] = useRealtimeSavedCourses()
+    const savedCoursesContext = useContext(SavedCoursesContext)
 
     return (
         <div className="m-8">
@@ -14,7 +14,7 @@ const AssignmentsTab = () => {
                 <i className="icon-notebook text-purple-700"></i> Assignments
             </h1>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
-                {courses.map(courseId => <CourseAssignments key={courseId} courseId={courseId} />)}
+                {savedCoursesContext.savedCourses.map(courseId => <CourseAssignments key={courseId} courseId={courseId} />)}
             </div>
         </div>
     )
