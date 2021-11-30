@@ -11,7 +11,6 @@ import useSavedCourse from "../hooks/use-saved-course"
 const CourseAssignments = ({ courseId }) => {
     const [modalOpen, setModalOpen] = useState(false)
     const [course, assignments, loading] = useRealtimeCourse(courseId)
-    const savedCoursesContext = useContext(SavedCoursesContext)
     const { unsave } = useSavedCourse(courseId)
 
     const openModal = () => {
@@ -20,7 +19,7 @@ const CourseAssignments = ({ courseId }) => {
 
     return (
         <Card>
-            {modalOpen ? <EditCourseAssignmentModal courseId={courseId} setModalOpen={setModalOpen} /> : null}
+            <EditCourseAssignmentModal courseId={courseId} modalOpen={modalOpen} setModalOpen={setModalOpen} />
             {(() => {
                 if (!loading && course && assignments) {
                     return (

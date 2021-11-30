@@ -8,7 +8,7 @@ import NewAssignmentCard from '../components/NewAssignmentCard'
 import useRealTimeCourse from "../hooks/use-realtime-course"
 import UpdateCourse from '../api/update-course'
 
-const EditCourseAssignmentModal = ({ courseId, setModalOpen }) => {
+const EditCourseAssignmentModal = ({ courseId, modalOpen, setModalOpen }) => {
     const [course, assignments, loading] = useRealTimeCourse(courseId)
 
     const closeModal = () => {
@@ -34,7 +34,7 @@ const EditCourseAssignmentModal = ({ courseId, setModalOpen }) => {
 
     return (
         <Modal
-            isOpen={true}
+            isOpen={modalOpen}
             closeTimeoutMS={250}
         >
             {(() => {
